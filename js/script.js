@@ -172,48 +172,53 @@ let swiperInstance = null;
 
 
 function updateCarouselSlides() {
-  fetch(`http://localhost:3001/properties/${PROJECTID}/banner`)
-    .then(response => response.json())
-    .then(data => {
-      if (data.banners && data.banners.length > 0) {
-        const swiperWrapper = document.querySelector('.swiper-wrapper');
-        swiperWrapper.innerHTML = ''; // Clear existing slides
-        
-        data.banners.forEach((banner, index) => {
-          const slide = document.createElement('div');
-          slide.className = 'swiper-slide';
-          slide.style.backgroundImage = `url(${banner.image})`;
-
-          slide.innerHTML = `
-            <div class="swiper-slide-caption">
-              <div class="shell text-sm-left">
-                <h1 data-caption-animate="slideInDown" data-caption-delay="100">${banner.heading}</h1>
-                <div class="slider-subtitle-group">
-                  <div class="decoration-line" data-caption-animate="slideInDown" data-caption-delay="400"></div>
-                  <h4 data-caption-animate="slideInLeft" data-caption-delay="700">${banner.subHeading}</h4>
-                  <h3 data-caption-animate="slideInLeft" data-caption-delay="800">${banner.subHeading2 || ''}</h3>
-                </div>
-                <a class="button button-effect-ujarak button-lg button-white-outline button-square" href="${banner.link || '#'}" data-caption-animate="slideInLeft" data-caption-delay="1150"><span>${banner.buttonText || 'Learn More'}</span></a>
-              </div>
-            </div>
-          `;
-
-          swiperWrapper.appendChild(slide);
-        });
-
-        if (swiperInstance) {
-          swiperInstance.update(); // Update Swiper instead of reinitializing
-        } else {
-          initializeSwiper(); // Initialize Swiper if not already initialized
-        }
-      } else {
-        console.error('No banners found in the response');
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching the banners:', error);
-    });
-}
+	fetch(`http://localhost:3001/properties/${PROJECTID}/banner`)
+	  .then(response => response.json())
+	  .then(data => {
+		if (data.banners && data.banners.length > 0) {
+		  const swiperWrapper = document.querySelector('.swiper-wrapper');
+		  swiperWrapper.innerHTML = ''; // Clear existing slides
+  
+		  data.banners.forEach((banner) => {
+			const slide = document.createElement('div');
+			slide.className = 'swiper-slide';
+			slide.style.backgroundImage = `url(${banner.image})`;
+  
+			// Construct slide content
+			slide.innerHTML = `
+			  <div class="swiper-slide-caption section-md">
+				<div class="container">
+				  <h1 data-caption-animate="slideInDown" data-caption-delay="100">${banner.heading}</h1>
+				  <div class="slider-subtitle-group">
+					<div class="decoration-line" data-caption-animate="slideInDown" data-caption-delay="400"></div>
+					<h4 data-caption-animate="slideInLeft" data-caption-delay="700">${banner.subHeading}</h4>
+					${banner.subHeading2 ? `<h3 data-caption-animate="slideInLeft" data-caption-delay="800">${banner.subHeading2}</h3>` : ''}
+				  </div>
+				  <a class="button button-effect-ujarak button-lg button-white-outline button-square" href="${banner.link || '#'}" data-caption-animate="slideInLeft" data-caption-delay="1150">
+					<span>${banner.buttonText || 'Learn More'}</span>
+				  </a>
+				</div>
+			  </div>
+			`;
+  
+			swiperWrapper.appendChild(slide);
+		  });
+  
+		  // Update swiper if it's already initialized, otherwise initialize
+		  if (typeof swiperInstance !== 'undefined' && swiperInstance !== null) {
+			swiperInstance.update(); // Update Swiper
+		  } else {
+			initializeSwiper(); // Initialize Swiper if it's not initialized
+		  }
+		} else {
+		  console.error('No banners found in the response');
+		}
+	  })
+	  .catch(error => {
+		console.error('Error fetching the banners:', error);
+	  });
+  }
+  
 
 
 function fetchAndDisplayGalleryProducts() {
